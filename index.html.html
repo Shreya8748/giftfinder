@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gift Finder</title>
+
+<style>
+
+body{
+font-family: Arial;
+text-align:center;
+background-image: url("background img.png");
+background-size: cover;
+background-repeat: no-repeat;
+background-position: center;
+}
+
+.container{
+background:rgb(250, 221, 226);
+width:70%;
+margin:auto;
+padding:20px;
+border-radius:10px;
+}
+
+.gift-card{
+border:1px solid #ccc;
+width:220px;
+display:inline-block;
+margin:15px;
+padding:10px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+transition:0.3s;
+}
+
+/* Hover effect */
+.gift-card:hover{
+transform:scale(1.05);
+}
+
+.gift-card img{
+width:200px;
+height:150px;
+object-fit:cover;
+border-radius:5px;
+}
+
+button{
+padding:10px 20px;
+font-size:16px;
+background:#ff5e7e;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#ff3c64;
+}
+
+a{
+text-decoration:none;
+color:white;
+background:#28a745;
+padding:6px 10px;
+border-radius:5px;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎁 Gift Finder</h1>
+
+<label>Occasion:</label>
+
+<select id="occasion">
+<option>Birthday</option>
+<option>Anniversary</option>
+<option>Festival</option>
+<option>Mother's Day</option>
+<option>wedding</option>
+</select>
+
+<br><br>
+
+<label>Budget:</label>
+
+<select id="budget">
+<option>Below 500</option>
+<option>500-1000</option>
+<option>Above 1000</option>
+</select>
+
+<br><br>
+
+<button onclick="findGift()">Find Gifts</button>
+
+<h2>Suggested Gifts</h2>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+let gifts=[
+
+{
+occasion:"Birthday",
+budget:"Below 500",
+name:"Chocolate Box",
+img:"https://m.media-amazon.com/images/I/91pKBeE6m6L.jpg",
+link:"https://www.amazon.in/s?k=choclate+box+for+gifting&ref=nb_sb_noss"
+},
+
+{
+occasion:"Birthday",
+budget:"500-1000",
+name:"Teddy Bear",
+img:"https://th.bing.com/th/id/OIP.eYHIahO8M5QNCUC0YscCLwHaFj?w=260&h=195&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+link:"https://www.amazon.in/s?k=teddy+bear&crid=SSX1U48HC5DE&sprefix=teddy+%2Caps%2C533&ref=nb_sb_noss_2"
+},
+
+{
+occasion:"Birthday",
+budget:"Above 1000",
+name:"perfume",
+img:"https://tse4.mm.bing.net/th/id/OIP.TH4BLdXjw8sPZKKWHxOQWwHaE8?pid=Api&P=0&h=180",
+link:"https://www.amazon.in/s?k=perfume&ref=nb_sb_noss"
+},
+
+{
+occasion:"Anniversary",
+budget:"Below 500",
+name:"flower bouquet",
+img:"flower.webp",
+link:"https://www.amazon.in/s?k=flower+bouquet&crid=58I5NC4T2D70&sprefix=flower+bouquet%2Caps%2C558&ref=nb_sb_noss_2"
+},
+
+{
+occasion:"Anniversary",
+budget:"500-1000",
+name:"Couple Photo Frame and photo mug",
+img:"https://digiprintshop.com/wp-content/uploads/2026/01/apf26d003-wooden-2.jpg",
+link:"https://www.amazon.in/s?k=couple+photo+frame&crid=3KBHSDPQ2T6CD&sprefix=couple+photo+fram%2Caps%2C786&ref=nb_sb_noss_2"
+},
+
+{
+occasion:"Anniversary",
+budget:"Above 1000",
+name:"jwelery and candle light dinner",
+img:"https://th.bing.com/th/id/OIP.uBaSSm7R7BkDUgXfbLg9HgHaE8?w=302&h=200&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+link:"https://www.amazon.in/s?k=jewellery+for+women&crid=2TZ6ZBFC54DYA&sprefix=jwelery%2Caps%2C483&ref=nb_sb_ss_mvt-t11-ranker_ci_hl-bn-left_2_7"
+},
+
+{
+occasion:"Festival",
+budget:"Below 500",
+name:"Sweet Box",
+img:"OIP.webp",
+link:"https://www.amazon.in/s?k=sweet+box&crid=2TQ9QKLQB54VE&sprefix=sweet+box%2Caps%2C495&ref=nb_sb_noss_2"
+},
+
+{
+occasion:"Festival",
+budget:"500-1000",
+name:"sweet box along with diya and firecrackers",
+img:"https://img.freepik.com/premium-photo/diwali-festival-sweets-with-diya-lamp-gift-box-table_1067001-37396.jpg",
+link:"https://www.amazon.in/Gourmet-Baklava-Assorted-Diwali-Cashew/dp/B0CLVS8N48/ref=sr_1_7?crid=196RBM4HLO5XV&dib=eyJ2IjoiMSJ9.BD2-21pypiqDXdxDmI-Xn3aq29jlA0qLpK2aZj08NtMrIPjDJ8rF-a6uE9U7z9rzv5tKZlYfMSokl1K4rZdlziD0a6L5z6Ig3o0iWeJd3f4Ur1jwyqWNfkxBU4C31koyI2Y9zRFDJWiXfcH9WQ9bOm-xlZ0FDQ575cLOpw6RTAMaqNfMhvJN5BUNxNfwK8fXGAGiLUB3fPmNnTbEZvdh7lM1zFkgv3aiZ3_jtlD_nrvCMZUxZI2lSFKUjM2Qwn3C5BMGdCkWJD_82eqgDlA9q2_NNqo8vynKC5I0vA91i8M.djqXbiX-oULDkNEu37qhlxazGHFCjHqlYBjQOPK1f34&dib_tag=se&keywords=costly+sweetbox&qid=1773469001&sprefix=costly+sweetbox%2Caps%2C1221&sr=8-7"
+},
+
+{
+occasion:"Festival",
+budget:"Above 1000",
+name:"gift hamper",
+img:"https://tse3.mm.bing.net/th/id/OIP.EvUpOZWlh-9dpDrq9RHNvAHaHR?pid=Api&P=0&h=180",
+link:"https://www.amazon.in/s?k=gift+hamper&crid=1LFS56NDWKF95&sprefix=gift+hamp%2Caps%2C525&ref=nb_sb_noss_2"
+},
+
+{
+occasion:"Mother's Day",
+budget:"Below 500",
+name:"make-up",
+img:"https://th.bing.com/th/id/OIP.g5D9Y3LUpF6zcmcrfRpu8wHaEJ?w=297&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+link:"https://www.amazon.in/s?k=makeup&ref=nb_sb_noss"
+},
+
+{
+occasion:"Mother's Day",
+budget:"500-1000",
+name:"Handbag",
+img:"https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcScobuMMl4Zmuqq5lEpL-VKLvC8fVM301GuFrA8JbfHf4MdGUTdtyGZPgHWg1GCYtDXmhqGRJfmr-LwhAaj92UgZ7P4mrCNMK7sk2v8tXZTVdJWSnplxk6ZCg",
+link:"https://www.amazon.in/s?k=handbag"
+},
+
+{
+occasion:"Mother's Day",
+budget:"Above 1000",
+name:"saree",
+img:"https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTuKAdICK6CRrkrtAAWGhe3YyCO4DTpY7TOjYAnjYoNFst0rcwnY2RGR0NcsekvrV3DM2XajtWWKvGfhNQBxraWS7HsKd6tFWtmfj189qsF80K8PPd9pUzNOQ",
+link:"https://www.amazon.in/s?k=handbaghttps://www.amazon.in/s?k=sareee&ref=nb_sb_noss"
+},
+
+{
+occasion:"wedding",
+budget:"Below 500",
+name:"perfume",
+img:"https://th.bing.com/th/id/OIP.xWAEe6CopFB-oeFKbFa0nAHaHa?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3",
+link:"https://www.amazon.in/s?k=perfume&ref=nb_sb_noss"
+},
+
+{
+occasion:"wedding",
+budget:"500-1000",
+name:"saree",
+img:"https://th.bing.com/th/id/OIP.8OptluM6GYViMgTM5VFa7QHaJG?w=208&h=256&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+link:"https://www.amazon.in/s?k=handbaghttps://www.amazon.in/s?k=sareee&ref=nb_sb_noss"
+},
+
+{
+occasion:"wedding",
+budget:"Above 1000",
+name:"jwelery",
+img:"https://th.bing.com/th/id/OIP.AHnfNTQhoJVNq-zdnt0hGQHaGN?w=223&h=186&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+link:"https://www.amazon.in/s?k=jewellry&crid=2Y3E3J7PPJKHV&sprefix=jewellry%2Caps%2C2851&ref=nb_sb_noss_2"
+}
+
+];
+
+function findGift(){
+
+let occasion=document.getElementById("occasion").value;
+let budget=document.getElementById("budget").value;
+
+let resultDiv=document.getElementById("result");
+
+/* Search animation */
+resultDiv.innerHTML="<p>🔎 Searching gifts...</p>";
+
+setTimeout(function(){
+
+resultDiv.innerHTML="";
+
+let found=false;
+
+for(let i=0;i<gifts.length;i++){
+
+if(gifts[i].occasion===occasion && gifts[i].budget===budget){
+
+found=true;
+
+let card=document.createElement("div");
+card.className="gift-card";
+
+card.innerHTML=`
+<img src="${gifts[i].img}">
+<h3>${gifts[i].name}</h3>
+<a href="${gifts[i].link}" target="_blank">Buy Now</a>
+`;
+
+resultDiv.appendChild(card);
+
+}
+
+}
+
+if(!found){
+resultDiv.innerHTML="<p>No gifts found for this selection</p>";
+}
+
+},500);
+
+}
+
+</script>
+
+</body>
+</html>
